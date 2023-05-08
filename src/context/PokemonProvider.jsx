@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { PokemonContext } from "./PokemonContext";
+import { useForm } from "../hook/useForm";
 
 export const PokemonProvider = ({ children }) => {
-  const [allPokemon, setAllPokemons] = useState([]);
+  const [allPokemons, setAllPokemons] = useState([]);
   const [globalPokemons, setGlobalPokemons] = useState([]);
   const [offset, setOffset] = useState(0);
+
+  // Utilizar CustomHook - useForm
+  const {valueSearch, onInputChange, onResetForm} = useForm({
+    valueSearch: ''
+  })
+
 
   // Estados para la aplicacion simples
   const [loading, setLoading] = useState(true)
@@ -26,7 +33,7 @@ export const PokemonProvider = ({ children }) => {
     });
     const results = await Promise.all(promises);
 
-    setAllPokemons(results);
+    setAllPokemons([...allPokemons, ...results]);
     setLoading(false)
 
   };
@@ -68,7 +75,12 @@ export const PokemonProvider = ({ children }) => {
   return (
     <PokemonContext.Provider
       value={{
-        numero: 0,
+        valueSearch,
+        onInputChange,
+        onResetForm,
+        allPokemons,
+        globalPokemons,
+        getPokemonById
       }}
     >
       {children}
